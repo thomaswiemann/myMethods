@@ -1,0 +1,13 @@
+name = "MyMethods"
+uuid = "18de7e97-ce2a-4ea9-8d3b-e4b0c3b0b515"
+authors = ["Thomas Wiemann <wiemann@uchicago.edu> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
