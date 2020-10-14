@@ -21,8 +21,7 @@ end #MYLLR
 
 # Functions for objects of type myLLR
 ## Coefficient function for myLLR object
-function coef(fit::myLLR; 
-        x=quantile(fit.x, collect(1:10)./10))
+function coef(fit::myLLR, x=quantile(fit.x, collect(1:10)./10))
     # Data parameters
     N_x = length(x)
     
