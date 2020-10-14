@@ -43,7 +43,7 @@ function coef(fit::myLLR;
         u = (xi .- fit.x) ./ fit.h
         # Calculate kernel weights
         w = get_kw(u, fit.kernel)
-        # Create regressors matrix
+        # Create regressor matrix
         X = reduce(hcat, [u.^d for d in 0:fit.K])
         if !isnothing(fit.control)
             X = hcat(X, fit.control)
