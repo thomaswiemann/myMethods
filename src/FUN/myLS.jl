@@ -28,6 +28,11 @@ struct myLS
 end #MYLS
 
 # Functions for objects of type myLS
+# Coefficient function for myLS object
+function coef(fit::myLS)
+    return fit.coef
+end
+
 ## Prediction function for myLS object
 function predict(fit::myLS; data=nothing)
     # Return predicted values
