@@ -28,7 +28,7 @@ function coef(fit::myLLR, x=quantile(fit.x, collect(1:10)./10))
     # Check whether additional variables are included 
     with_control = !isnothing(fit.control)
     if with_control
-        dim_coef = size(control,2) + fit.K + 1
+        dim_coef = size(fit.control,2) + fit.K + 1
     else
         dim_coef = fit.K + 1
     end
@@ -63,7 +63,7 @@ function coefPAR(fit::myLLR, x=quantile(fit.x, collect(1:10)./10);
     # Check whether additional variables are included 
     with_control = !isnothing(fit.control)
     if with_control
-        dim_coef = size(control,2) + fit.K + 1
+        dim_coef = size(fit.control,2) + fit.K + 1
     else
         dim_coef = fit.K + 1
     end
