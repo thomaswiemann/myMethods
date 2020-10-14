@@ -53,7 +53,7 @@ function inference(fit::myLS; heteroskedastic::Bool=false,
     
     # Calculate covariance matrix and standard errors
     u = fit.y - predict(fit) # residuals
-    if isnan(fit.w[1])
+    if isnothing(fit.w)
         # Covariance for LS 
         XX_inv = inv(fit.X'*fit.X)
         if !heteroskedastic
