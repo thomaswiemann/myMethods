@@ -56,8 +56,7 @@ function coef(fit::myLLR, x=quantile(fit.x, collect(1:10)./10))
 end #COEF.MYLLR
 
 ## Parallel coefficient function for myLLR object
-function coefPAR(fit::myLLR; 
-        x=quantile(fit.x, collect(1:10)./10),
+function coefPAR(fit::myLLR, x=quantile(fit.x, collect(1:10)./10);
         dynamic=false,)
     # Data parameters
     N_x = length(x)
@@ -80,7 +79,7 @@ function coefPAR(fit::myLLR;
             for p in workers()
                 @async begin
                     for idx in 1:length(x)
-                        res[idx,:] = remotecall_fetch(coef, p, 
+                        coef_mat[idx,:] = remotecall_fetch(coef, p, 
                         fit, x[idx])'
                     end
                 end
@@ -89,7 +88,7 @@ function coefPAR(fit::myLLR;
     end
     
     # Return local coefficients
-    return coef_mat
+    return coef_mat'
 end #COEFPAR.MYLLR
     
 ## Internal function to obtain kernel weights    
