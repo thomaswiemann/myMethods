@@ -14,3 +14,10 @@ After installation, load the package in your current Julia session per the usual
 ```
 using MyMethods
 ```
+
+### Remove Package
+The package may be removed using Pkg:
+```
+using Pkg; 
+Pkg.rm("MyMethods")
+```
