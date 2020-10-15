@@ -3,27 +3,28 @@
 struct myLLR
     y::Array{Float64,2} # response
     x # running variable
+	_x # values at which to calculate LLR
     K::Int64 # degree of local linear regression
 	h::Float64 # bandwidth
-	control # variables included in LLR
+	control # additional variables included in LLR
 	kernel # kernel function
     
     # Define constructor function
 	# to do: add mySilver function as default value!
-    function myLLR(y::Array{Float64,2}, x; K::Int64=0,
-		h::Float64=0.5, control = nothing, kernel = "Epanechnikov")	
+    function myLLR(y::Array{Float64,2}, x; _x = quantile(x, collect(1:10)./10),
+		K::Int64=0, h::Float64=0.5, control = nothing, kernel = "Epanechnikov")	
     
     # Organize and return output
-    new(y, x, K, h, control, kernel)
+    new(y, x, _x, K, h, control, kernel)
     end #MYLLR
     
 end #MYLLR
 
 # Functions for objects of type myLLR
 ## Coefficient function for myLLR object
-function coef(fit::myLLR, x=quantile(fit.x, collect(1:10)./10))
+function coef(fit::myLLR, _x=fit._x)
     # Data parameters
-    N_x = length(x)
+    N_x = length(_x)
     
     # Check whether additional variables are included 
     with_control = !isnothing(fit.control)
@@ -36,7 +37,7 @@ function coef(fit::myLLR, x=quantile(fit.x, collect(1:10)./10))
     # For each value in x, calculate local coefficients
     coef_mat = Array{Float64, 2}(undef, N_x, dim_coef)
     idx = 0
-    for xi in x
+    for xi in _x
         idx = idx + 1
         # Calculate distance to xi in the data normalized by the bandwidth
         u = (xi .- fit.x) ./ fit.h
@@ -56,10 +57,10 @@ function coef(fit::myLLR, x=quantile(fit.x, collect(1:10)./10))
 end #COEF.MYLLR
 
 ## Parallel coefficient function for myLLR object
-function coefPAR(fit::myLLR, x=quantile(fit.x, collect(1:10)./10);
+function coefPAR(fit::myLLR, _x=fit._x;
         dynamic=false,)
     # Data parameters
-    N_x = length(x)
+    N_x = length(_x)
     # Check whether additional variables are included 
     with_control = !isnothing(fit.control)
     if with_control
@@ -70,17 +71,17 @@ function coefPAR(fit::myLLR, x=quantile(fit.x, collect(1:10)./10);
     
     # Run LLR in parallel
     if !dynamic # w/o dynamic job scheduling
-        coef_mat = @distributed (hcat) for idx in 1:length(x)
-            coef(fit, x[idx])'
+        coef_mat = @distributed (hcat) for idx in 1:length(_x)
+            coef(fit, _x[idx])'
         end
     else # w/ dynamic job scheduling
         coef_mat = Array{Float64, 2}(undef, N_x, dim_coef)
         @sync begin
             for p in workers()
                 @async begin
-                    for idx in 1:length(x)
+                    for idx in 1:length(_x)
                         coef_mat[idx,:] = remotecall_fetch(coef, p, 
-                        fit, x[idx])'
+                        fit, _x[idx])'
                     end
                 end
             end
