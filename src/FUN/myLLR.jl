@@ -1,8 +1,8 @@
 # Define myLLR object
 # to do: set type of x!
 struct myLLR
-    y::Array{Float64,1} # response
-    x::Array{Float64,1} # running variable
+    y::Array{Float64} # response
+    x::Array{Float64} # running variable
 	control # additional variables included in LLR
 	_x # values at which to calculate LLR
     K::Int64 # degree of local linear regression
@@ -12,12 +12,12 @@ struct myLLR
     
     # Define constructor function
 	# to do: add mySilver function as default value!
-    function myLLR(y::Array{Float64,1}, x::Array{Float64,1}, control = nothing; 
+    function myLLR(y::Array{Float64}, x::Array{Float64}, control = nothing; 
 		_x = quantile(x, collect(1:10)./10),
 		K::Int64=0, h::Float64=0.5, kernel = "Epanechnikov")	
     
     # Organize and return output
-    new(y, x, _x, K, h, control, kernel)
+    new(y, x, control, _x, K, h, kernel)
     end #MYLLR
     
 end #MYLLR
