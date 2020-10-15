@@ -1,18 +1,20 @@
 # Define myLLR object
 # to do: set type of x!
 struct myLLR
-    y::Array{Float64,2} # response
-    x # running variable
+    y::Array{Float64,1} # response
+    x::Array{Float64,1} # running variable
+	control # additional variables included in LLR
 	_x # values at which to calculate LLR
     K::Int64 # degree of local linear regression
 	h::Float64 # bandwidth
-	control # additional variables included in LLR
+	
 	kernel # kernel function
     
     # Define constructor function
 	# to do: add mySilver function as default value!
-    function myLLR(y::Array{Float64,2}, x; _x = quantile(x, collect(1:10)./10),
-		K::Int64=0, h::Float64=0.5, control = nothing, kernel = "Epanechnikov")	
+    function myLLR(y::Array{Float64,1}, x::Array{Float64,1}, control = nothing; 
+		_x = quantile(x, collect(1:10)./10),
+		K::Int64=0, h::Float64=0.5, kernel = "Epanechnikov")	
     
     # Organize and return output
     new(y, x, _x, K, h, control, kernel)
@@ -22,7 +24,7 @@ end #MYLLR
 
 # Functions for objects of type myLLR
 ## Coefficient function for myLLR object
-function coef(fit::myLLR, _x=fit._x)
+function coef(fit::myLLR, _x::Array{Float64,1}=fit._x)
     # Data parameters
     N_x = length(_x)
     

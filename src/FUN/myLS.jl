@@ -1,12 +1,12 @@
 # Define myLS object
 struct myLS
     coef::Array{Float64,2}
-    y::Array{Float64,2} # response
+    y::Array{Float64,1} # response
     X::Array{Float64,2} # features
     w # weights
     
     # Define constructor function
-    function myLS(y::Array{Float64,2}, X::Array{Float64,2}, w=nothing;
+    function myLS(y::Array{Float64,1}, X::Array{Float64,2}, w=nothing;
 	constant::Bool=false)
     # Check whether constant should be added to X
     if constant
@@ -31,7 +31,7 @@ end #MYLS
 # Coefficient function for myLS object
 function coef(fit::myLS)
     return fit.coef
-end
+end #COEF.MYLS
 
 ## Prediction function for myLS object
 function predict(fit::myLS; data=nothing)
