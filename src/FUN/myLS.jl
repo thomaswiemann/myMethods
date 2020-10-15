@@ -1,12 +1,12 @@
 # Define myLS object
 struct myLS
     coef::Array{Float64,2}
-    y::Array{Float64} # response
-    X::Array{Float64} # features
+    y::Array{Float64,2} # response
+    X::Array{Float64,2} # features
     w # weights
     
     # Define constructor function
-    function myLS(y::Array{Float64}, X::Array{Float64}, w=nothing;
+    function myLS(y::Array{Float64,2}, X::Array{Float64,2}, w=nothing;
 	constant::Bool=false)
     # Check whether constant should be added to X
     if constant
