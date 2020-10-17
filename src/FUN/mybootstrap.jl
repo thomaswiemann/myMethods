@@ -45,6 +45,7 @@ function mybootstrap(FUN, y, B::Int, args...;
 end #MYBOOTSTRAP
 
 # Define parallel bootstrap function
+## Issues: 1. myLLR in mybootstrapPAR issues
 function mybootstrapPAR(FUN, y, B::Int, args...; 
         id=nothing, data_args=nothing, 
         get = nothing, red = nothing,

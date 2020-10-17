@@ -2,7 +2,7 @@
 # to do: set type of x!
 struct myLLR
     y::Array{Float64,2} # response
-    x::Array{Float64,2} # running variable
+    x # running variable
 	control # additional variables included in LLR
 	_x # values at which to calculate LLR
     K::Int64 # degree of local linear regression
@@ -12,8 +12,8 @@ struct myLLR
     
     # Define constructor function
 	# to do: add mySilver function as default value!
-    function myLLR(y::Array{Float64,2}, x::Array{Float64,2}, control = nothing; 
-		_x = quantile(x, collect(1:10)./10),
+    function myLLR(y::Array{Float64,2}, x, control = nothing; 
+		_x = quantile(x[:], collect(1:10)./10),
 		K::Int64=0, h::Float64=0.5, kernel = "Epanechnikov")	
     
     # Organize and return output
@@ -24,7 +24,7 @@ end #MYLLR
 
 # Functions for objects of type myLLR
 ## Coefficient function for myLLR object
-function coef(fit::myLLR, _x::Array{Float64,1}=fit._x)
+function coef(fit::myLLR, _x=fit._x)
     # Data parameters
     N_x = length(_x)
     
@@ -59,8 +59,9 @@ function coef(fit::myLLR, _x::Array{Float64,1}=fit._x)
 end #COEF.MYLLR
 
 ## Parallel coefficient function for myLLR object
+## Issues: 1. type specification
 function coefPAR(fit::myLLR, _x=fit._x;
-        dynamic=false,)
+        dynamic=false)
     # Data parameters
     N_x = length(_x)
     # Check whether additional variables are included 
@@ -93,12 +94,14 @@ function coefPAR(fit::myLLR, _x=fit._x;
     # Return local coefficients
     return coef_mat'
 end #COEFPAR.MYLLR
+
+## To do: Prediction function for myLLR
     
 ## Internal function to obtain kernel weights    
 ### Note: Scales are omitted b/c weights are rescaled to unity in sample
 function get_kw(u, kernel)
     # Calculate kernel weights
-    w = fill(0.0, length(u))
+    w = Array{Float64,2}(undef, length(u), 1)
     if kernel == "Epanechnikov"
         @. w = (1 - u^2) * (abs(u) < 1)
     elseif kernel == "Uniform"
