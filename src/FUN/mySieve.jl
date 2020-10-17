@@ -27,7 +27,7 @@ struct mySieve
         coef = fit_sieve.coef
         
         # Organize and return output
-        new(coef, y, X, basis, K)
+        new(coef, y, X, basis, K, knots)
     end #MYSIEVE
     
 end #MYSIEVE
@@ -69,8 +69,9 @@ function get_basis(x, basis, K, knots)
 	elseif basis == "LSplines"
 		# Check whether sufficient knots are provided
 		if isnothing(knots)
-			println("Warning: Knots defined as quantiles of x.")
-			knots = collect(1:(K))./(K+1)
+			#println("Warning: Knots defined as quantiles of x.")
+			q_knots = collect(1:(K))./(K+1)
+			knots = quantile(x[:], q_knots)
 		else
 			K = length(knots)
 		end
