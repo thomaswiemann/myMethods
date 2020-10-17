@@ -1,12 +1,12 @@
 # Define myLS object
 struct myLS
-    coef::Array{Float64,2}
-    y::Array{Float64,2} # response
-    X::Array{Float64,2} # features
+    coef::Array{Float64}
+    y::Array{Float64} # response
+    X::Array{Float64} # features
     w # weights
     
     # Define constructor function
-    function myLS(y::Array{Float64,2}, X::Array{Float64,2}, w=nothing;
+    function myLS(y::Array{Float64}, X::Array{Float64}, w=nothing;
 	constant::Bool=false)
     # Check whether constant should be added to X
     if constant
@@ -28,7 +28,7 @@ struct myLS
 end #MYLS
 
 # Functions for objects of type myLS
-# Coefficient function for myLS object
+## Coefficient function for myLS object
 function coef(fit::myLS)
     return fit.coef
 end #COEF.MYLS
@@ -44,8 +44,8 @@ function predict(fit::myLS; data=nothing)
 end #PREDICT.MYLS
 
 ## Inference function for myLS object
-## To do: implement clustered standard errors
-function inference(fit::myLS; heteroskedastic::Bool=false, 
+# To do: clustered se for wls
+function inference(fit::myLS; heteroskedastic::Bool=false, cluster=nothing,
     print_df::Bool=true)
     # Obtain data parameters
     N = length(fit.y)
@@ -56,12 +56,28 @@ function inference(fit::myLS; heteroskedastic::Bool=false,
     if isnothing(fit.w)
         # Covariance for LS 
         XX_inv = inv(fit.X'*fit.X)
-        if !heteroskedastic
+        if !heteroskedastic & isnothing(cluster)
+            # homoskedastic se
             covar = sum(u.^2) * XX_inv
 			covar = covar .* (1/(N-K)) # dof adjustment
-        else
+        elseif isnothing(cluster)
+            # heteroskedastic se
             covar = XX_inv * ((fit.X .* (u.^2))' * fit.X) * XX_inv 
 			covar = covar .* (N/(N-K)) # dof adjustment
+        else
+            # clustered se
+            u_cluster = unique(cluster)
+            M = length(u_cluster)
+            # calculate inner covariance term
+            Xu = fit.X .* u
+            Xu_m = Array{Float64,2}(undef, M,K) 
+            for cl in 1:M
+                Xu_cl = Xu[findall(cluster.==u_cluster[cl]),:]
+                Xu_m[cl,:]=mapslices(sum, Xu_cl, dims=1)
+            end
+            # Combine to covariance matrix w/ dof adjustment
+            XuuX = Xu_m' * Xu_m .* ((N-1)/(N-K)) * (M/(M-1))
+            covar = XX_inv * XuuX * XX_inv
         end
     else 
         # Covariance for WLS
@@ -94,3 +110,18 @@ function inference(fit::myLS; heteroskedastic::Bool=false,
     output = (coef=fit.coef, se=se, t=t_stat, p=p_val)
     return output
 end #INFERENCE.MYLS
+
+# Function to calculate R2 and adj R2
+function R2(fit::myLS)
+    # Data parameters
+    N, P = size(fit.X)
+    # Calculate R2
+    SS_tot = sum((fit.y.-mean(fit.y)).^2)
+    res = fit.y - predict(fit)
+    SS_res = sum(res.^2)
+    R2 = 1 - SS_res/SS_tot
+    # Calculate adjusted R2
+    ajd_R2 = 1-(1-R2)*((N-1)/(N-P))
+    # Return output
+    return R2, ajd_R2
+end #R2.MYLS

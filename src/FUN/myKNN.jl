@@ -1,18 +1,20 @@
 # Define myKNN object
+#To do: allow x to be multivariate; define mahalianobis distance
 struct myKNN
     fitted # predicted values
 	knn # matrix containing indices of k nearest neighbours
     y # response
-    x # matching variable
+    x # matching variable(s)
 	_x # values to predict for
     K::Int64 # number of neighbours
     replacement::Bool # KNN with or without replacement
+	metric="Mahalanobis" # metric for multivariate matching
 	
 	# Define constructor function
-    function myKNN(y, x, _x; K = 1, replacement = true)
+    function myKNN(y, x, _x; K = 1, replacement = true, metric="Mahalanobis")
         # Data parameters
-        N = length(y)
-        n_x = length(_x)
+        N,K = size(x)
+        n_x = size(_x,1)
 
         # Calculate the matched differences
         fitted = Array{Float64,2}(undef, n_x,1); 
