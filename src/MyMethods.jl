@@ -6,9 +6,10 @@ using LinearAlgebra # for matrix operations
 using Distributions # for rnd samplers
 using Distributed # for parallelization
 using Statistics # for quantile function
+using Optim # for optimizer
 
 # May use export to avoid conflicts
-export myLS, mySieve, myLLR, myKNN, myMatch # my objects
+export myLS, mySieve, myLLR, myKNN, myMatch, myProbit # my objects
 export predict, inference, coef, coefPAR, R2 # my methods
 export mybootstrap, mybootstrapPAR, reduce_boot # my functions
 export myCov, myDist # smaller functions
@@ -25,6 +26,8 @@ include("FUN/myLLR.jl")
 include("FUN/myKNN.jl")
 ## myMatch
 include("FUN/myMatch.jl")
+## myProbit
+include("FUN/myProbit.jl")
 ## mybootstrap
 include("FUN/mybootstrap.jl")
 ## basic statistical functions
