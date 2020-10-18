@@ -8,12 +8,13 @@ struct myKNN
 	_x # values to predict for
     K::Int64 # number of neighbours
     replacement::Bool # KNN with or without replacement
-	metric="Mahalanobis" # metric for multivariate matching
+	metric # metric for multivariate matching
 	
 	# Define constructor function
-    function myKNN(y, x, _x; K = 1, replacement = true, metric="Mahalanobis")
+    function myKNN(y, x, _x; K = 1, replacement = true, metric="Mahalanobis",
+		S=nothing)
         # Data parameters
-        N,K = size(x)
+        N,nCol = size(x)
         n_x = size(_x,1)
 
         # Calculate the matched differences
@@ -21,7 +22,7 @@ struct myKNN
 		knn = Array{Int64,2}(undef, n_x, K); 
         is_out = fill(false, N); # for w/o replacement
         for idx in 1:n_x
-            u = abs.(_x[idx] .- x[.!is_out]) # take difference in x
+            u = myDist(x[.!is_out,:],_x[idx,:], metric=metric, S=S) 
             knn[idx,:] = sortperm(u)[1:K] # K nearest neighbours
             fitted[idx] = mean(y[.!is_out][knn[idx,:]])
             #if(!replacement) 
@@ -30,6 +31,6 @@ struct myKNN
         end 
         
         # Organize and return output
-        new(fitted, knn, y, x, _x, K, replacement)
+        new(fitted, knn, y, x, _x, K, replacement, metric)
     end #MYKNN
 end #MYKNN

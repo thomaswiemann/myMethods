@@ -9,8 +9,10 @@ using Statistics # for quantile function
 
 # May use export to avoid conflicts
 export myLS, mySieve, myLLR, myKNN, myMatch # my objects
-export predict, inference, coef, coefPAR # my methods
+export predict, inference, coef, coefPAR, R2 # my methods
 export mybootstrap, mybootstrapPAR, reduce_boot # my functions
+export myCov, myDist # smaller functions
+
 
 # Module content
 ## myLS
@@ -25,5 +27,7 @@ include("FUN/myKNN.jl")
 include("FUN/myMatch.jl")
 ## mybootstrap
 include("FUN/mybootstrap.jl")
+## basic statistical functions
+include("FUN/myFun.jl")
 
 end #MyMethods

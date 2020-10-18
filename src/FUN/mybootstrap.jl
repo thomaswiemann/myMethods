@@ -1,4 +1,5 @@
 # Define bootstrap function
+# to do: optimize bootstrapping function arguments
 function mybootstrap(FUN, y, B::Int, args...; 
         id=nothing, data_args=nothing, 
         get = nothing, red = nothing,
@@ -23,8 +24,15 @@ function mybootstrap(FUN, y, B::Int, args...;
         args_b = args
         if !isnothing(data_args)
             args_b = collect(args_b) # convert to array for modification
-            for k in data_args
-                args_b[k] = args_b[k][boot_sample,:] # uff...
+            for k in data_args # uff...
+				# Ensure that type of input remains unchanged
+				if typeof(args_b[k]).== Array{Float64,2} || 
+				typeof(args_b[k]).== Array{Int64,2}
+					args_b[k] = args_b[k][boot_sample,:] 
+				elseif typeof(args_b[k]).== Array{Float64,1} || 
+				typeof(args_b[k]).== Array{Int64,1}
+					args_b[k] = args_b[k][boot_sample]
+				end					
             end
             args_b = tuple(args_b[:]...)# convert back to tuple
         end
@@ -79,3 +87,24 @@ function mybootstrapPAR(FUN, y, B::Int, args...;
     end
     return res
 end #MYBOOTSTRAPPAR
+
+# Helper function to reduce bootstrap output to array
+function reduce_boot(boot_res)
+    # Data parameters
+    B = length(boot_res)
+    N, K = size(reduce(hcat,boot_res[1]))
+    if(N == 1)
+        clean_boot_res = Array{Float64,2}(undef, K,B)
+        for b in 1:B
+        clean_boot_res[:,b] = reduce(hcat,boot_res[b])
+        end
+    else
+        # Create three dimensional array and fill with results
+        clean_boot_res = Array{Float64,3}(undef, N,K,B)
+        for b in 1:B
+            clean_boot_res[:,:,b] = reduce(hcat,boot_res[b])
+        end
+    end
+    # Return results
+    return clean_boot_res
+end

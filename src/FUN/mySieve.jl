@@ -61,7 +61,7 @@ end #PREDICT.MYSIEVE
 ## Internal function to construct matrix of regressors from basis
 function get_basis(x, basis, K, knots)
 	if basis == "Bernstein"
-        X = [binomial(K, k).*(x.^k).*(1 .-x).^(K-k) for k in 0:K]
+        X = [(x.^k).*(1 .-x).^(K-k) for k in 0:K] # omit comb.
 		X = reduce(hcat,X)
     elseif basis == "Monomial"
         X = [x.^k for k in 0:K]
