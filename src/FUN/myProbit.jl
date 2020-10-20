@@ -24,23 +24,26 @@ struct myProbit
         coefs = Optim.minimizer(opt)
 
         new(coefs, y, X)
-    end
+    end #MYPROBIT
     
-end
+end #MYPROBIT
 
 function predict(fit::myProbit)
     mu = fit.X * fit.coef
     return cdf.(Normal(0,1), mu)
 end
 
+# Internal functions to compute myProbit object
+# Function to compute the loglikelihood of a probit model
 function logl_probit(y, X, par; negative = false)
     # Calculate cond mean
     mu = X*par
     # Calculate (negative) logl
     logl = (-1)^negative .* sum(cdf_probit.(y,mu,clog=true))
     return logl
-end
+end #LOGL_PROBIT
 
+# Function to compute the cdf corresponding to the probit model
 function cdf_probit(y, mu; clog=false)
     # Calculate density
     density = (1-y) + ((-1)^(1-y)) * cdf.(Normal(0, 1), mu)
@@ -49,4 +52,4 @@ function cdf_probit(y, mu; clog=false)
     end
     # return density
     return density
-end
+end #CDF_PROBIT 
