@@ -53,3 +53,19 @@ function myDist(X::Array{Float64,2},y::Array{Float64,1}; metric = "Mahalanobis",
 	# Broadcast myDist to rows of X
 	return mapslices(x -> myDist(x, y, metric=metric, S_inv=S_inv), X, dims=2)[:]
 end #MYDIST
+
+# Create dummy matrix from discrete variables
+# to do: implement sparse matrix 
+function myDummify(x, sparse=false)
+    # Check number of unique values in x
+    uni_x = sort(unique(x))
+    nx = length(uni_x)
+    # Construct matrix of indicators
+    X = zeros(length(x), nx)
+    for k in 1:nx
+        indx = findall(x.==uni_x[k])
+        X[indx, k] .= 1
+    end
+    # Return X
+    return X
+end

@@ -9,10 +9,10 @@ using Statistics # for quantile function
 using Optim # for optimizer
 
 # May use export to avoid conflicts
-export myLS, mySieve, myLLR, myKNN, myMatch, myProbit # my objects
+export myLS, mySieve, myLLR, myKNN, myMatch, myProbit, myTSLS, myJIVE, myLARF # my objects
 export predict, inference, coef, coefPAR, R2 # my methods
-export mybootstrap, mybootstrapPAR, reduce_boot # my functions
-export myCov, myDist # smaller functions
+export mybootstrap, mybootstrapPAR, reduce_boot, myAndersonRubin # my functions
+export myCov, myDist, myDummify # smaller functions
 
 
 # Module content
@@ -28,8 +28,16 @@ include("FUN/myKNN.jl")
 include("FUN/myMatch.jl")
 ## myProbit
 include("FUN/myProbit.jl")
+## myTSLS
+include("FUN/myTSLS.jl")
+## myJIVE
+include("FUN/myJIVE.jl")
+## myLARF
+include("FUN/myLARF.jl")
 ## mybootstrap
 include("FUN/mybootstrap.jl")
+## myAndersonRubin
+include("FUN/myAndersonRubin.jl")
 ## basic statistical functions
 include("FUN/myFun.jl")
 
