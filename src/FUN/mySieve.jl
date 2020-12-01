@@ -60,14 +60,9 @@ end #PREDICT.MYSIEVE
 # Internal functions (not exported)
 ## Internal function to construct matrix of regressors from basis
 function get_basis(x, basis, K, knots)
-	if basis == "Bernstein"
-        X = [(x.^k).*(1 .-x).^(K-k) for k in 0:K] # omit comb.
-		X = reduce(hcat,X)
-    elseif basis == "Monomial"
-        X = [x.^k for k in 0:K]
-		X = reduce(hcat,X)
-	elseif basis == "LSplines"
-		# Check whether sufficient knots are provided
+    # Check input
+    if basis == "CSplines" || basis == "LSplines" || basis == "CSplines2"
+        # Check whether sufficient knots are provided
 		if isnothing(knots)
 			#println("Warning: Knots defined as quantiles of x.")
 			q_knots = collect(1:(K))./(K+1)
@@ -75,10 +70,29 @@ function get_basis(x, basis, K, knots)
 		else
 			K = length(knots)
 		end
+    end
+    # Comput basis terms
+	if basis == "Bernstein"
+        X = [binomial(K,k)*(x.^k).*(1 .-x).^(K-k) for k in 0:K] # omit comb.
+		X = reduce(hcat,X)
+    elseif basis == "Monomial"
+        X = [x.^k for k in 0:K]
+		X = reduce(hcat,X)
+   elseif basis == "CSplines"
 		# Calculate splines
-		X = [(x.>knots[k]).*(x.-knots[k]) for k in 1:K] # not very efficient...
+		X = [(x.>knots[k]) for k in 1:K] # not very efficient...
+		# Add constant 
+		X = hcat(ones(length(x)), reduce(hcat,X))
+    elseif basis == "CSplines2"
+		# Calculate splines
+		X = [(knots[k+1].>x.>=knots[k]) for k in 1:(K-1)] # not very efficient...
+		# Add outer terms 
+		X = hcat((x.<knots[1]), reduce(hcat,X), (knots[K].<=x))
+	elseif basis == "LSplines"
+		# Calculate splines
+		X = [(x.>knots[k]).*(x.-knots[k]) for k in 1:K] 
 		# Add constant and linear term
-		X = hcat(fill(1,length(x)), x, reduce(hcat,X))
+		X = hcat(ones(length(x)), x, reduce(hcat,X))
     end
 	# Return matrix of regressors
 	return X
