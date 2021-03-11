@@ -7,7 +7,6 @@ struct myLLR
 	_x # values at which to calculate LLR
     K::Int64 # degree of local linear regression
 	h::Float64 # bandwidth
-	
 	kernel # kernel function
     
     # Define constructor function
@@ -45,6 +44,7 @@ function coef(fit::myLLR, _x=fit._x)
         u = (xi .- fit.x) ./ fit.h
         # Calculate kernel weights
         w = get_kw(u, fit.kernel)
+        w = w./sum(w) # normalize
         # Create regressor matrix
         X = reduce(hcat, [u.^d for d in 0:fit.K])
         if !isnothing(fit.control)
@@ -114,7 +114,7 @@ function get_kw(u, kernel)
         println("Specified kernel not yet implemented.")
     end
     # Normalize and return weights
-    return w./sum(w)
+    return w 
 end # GET_KW
 
 ## Function to obtain rule-of-thumb for bandwidth based on Silverman (1986)
