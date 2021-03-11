@@ -117,7 +117,7 @@ function get_kw(u, kernel)
     return w./sum(w)
 end # GET_KW
 
-## Function to obtain rule-of-thumb for bandwidth based on Silverman (1968)
+## Function to obtain rule-of-thumb for bandwidth based on Silverman (1986)
 function mySilverman(x; kernel = "Epanechnikov")
     # Data parameters
     nobs = length(x)
