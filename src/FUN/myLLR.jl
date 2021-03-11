@@ -116,3 +116,17 @@ function get_kw(u, kernel)
     # Normalize and return weights
     return w./sum(w)
 end # GET_KW
+
+## Function to obtain rule-of-thumb for bandwidth based on Silverman (1968)
+function mySilverman(x; kernel = "Epanechnikov")
+    # Data parameters
+    nobs = length(x)
+    σ = std(x)
+    # Get \delta
+    which_kernel = findfirst(kernel .== ["Uniform", "Epanechnikov", "Triangular", 
+            "Biweight", "Gaussian", "Mahalanobis"])
+    δ = [1.351, 1.7188, NaN, 2.0362, 0.7764, 1][which_kernel]
+    # Calculate and return rule-of-thumb bandwidth
+    h = 1.3643 * δ * σ * (nobs)^(-0.2)
+    return h
+end # MYSILVERMAN

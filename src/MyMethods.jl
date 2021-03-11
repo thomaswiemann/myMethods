@@ -12,7 +12,7 @@ using Optim # for optimizer
 export myLS, mySieve, myLLR, myKNN, myMatch, myProbit, myTSLS, myJIVE, myLARF # my objects
 export predict, inference, coef, coefPAR, R2 # my methods
 export mybootstrap, mybootstrapPAR, reduce_boot, myAndersonRubin # my functions
-export myCov, myDist, myDummify # smaller functions
+export myCov, myDist, myDummify, mySilverman # smaller functions
 
 
 # Module content
