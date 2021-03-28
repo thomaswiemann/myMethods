@@ -10,6 +10,7 @@ using Optim # for optimizer
 
 # May use export to avoid conflicts
 export myLS, mySieve, myLLR, myKDE, myKNN, myMatch, myProbit, myTSLS, myJIVE, myLARF # my objects
+export myChebychev
 export predict, inference, coef, coefPAR, R2 # my methods
 export mybootstrap, mybootstrapPAR, reduce_boot, myAndersonRubin # my functions
 export myCov, myDist, myDummify, mySilverman # smaller functions
@@ -36,6 +37,8 @@ include("FUN/myTSLS.jl")
 include("FUN/myJIVE.jl")
 ## myLARF
 include("FUN/myLARF.jl")
+## myChebychev
+include("FUN/myChebychev.jl")
 ## mybootstrap
 include("FUN/mybootstrap.jl")
 ## myAndersonRubin
